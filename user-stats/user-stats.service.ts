@@ -30,9 +30,9 @@ export class UserStatsService {
 
       return { userId, postCount, savedDestinationsCount };
     } catch (error) {
-      // Log the error for debugging
+     
       console.error(`Error fetching stats for user ${userId}:`, error.message);
-      // Return a default response to avoid crashing
+    
       return { userId, postCount: 0, savedDestinationsCount: 0 };
     }
   };

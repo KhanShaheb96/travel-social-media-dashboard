@@ -9,6 +9,6 @@ import { SavedDestination } from '../saved-destinations/saved-destination.entity
   imports: [TypeOrmModule.forFeature([Post, SavedDestination])],
   controllers: [UserStatsController],
   providers: [UserStatsService],
-  exports: [UserStatsService], // For groupmate's use
+  exports: [UserStatsService], 
 })
 export class UserStatsModule {}

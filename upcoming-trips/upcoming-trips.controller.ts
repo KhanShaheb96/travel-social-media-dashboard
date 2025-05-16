@@ -1,6 +1,6 @@
 import { Controller, Get, Post, Body, Param } from '@nestjs/common';
 import { UpcomingTripsService } from './upcoming-trips.service';
-// TypeScript: DTO for saving a trip
+
 class SaveTripDto {
   destinationId: number;
   userId: number;
@@ -17,7 +17,7 @@ export class UpcomingTripsController {
 
   @Post('save')
   async saveTrip(@Body() saveTripDto: SaveTripDto) {
-    const { destinationId, userId } = saveTripDto; // ES6: Destructuring
+    const { destinationId, userId } = saveTripDto; 
     return await this.upcomingTripsService.saveTrip(destinationId, userId);
   }
 
