@@ -25,35 +25,35 @@ export class PostsController {
 
   @UseGuards(AuthGuard('jwt'))
   @Get('my-posts')
-  async getMyPosts(@Request() req): Promise<PostEntity[]> {
+  async getMyPosts(@Request() req): Promise<PostEntity[] | { message: string }> {
     const userId = req.user.userId;
-    return await this.postsService.findByUserId(userId);
+    return await this.postsService.findByUserId(userId); 
   }
 
   @UseGuards(AuthGuard('jwt'))
-  @Delete(':id')
-  async delete(@Param('id') id: string, @Request() req) {
+  @Delete()
+  async delete(@Request() req, @Body('postId') postId: string) {
     const userId = req.user.userId;
-    const post = await this.postsService.findOne(+id);
+    const post = await this.postsService.findOne(+postId);
     if (post.userId !== userId) {
       throw new UnauthorizedException('You can only delete your own posts');
     }
-    return await this.postsService.deletePost(+id);
+    return await this.postsService.deletePost(+postId);
   }
 
   @UseGuards(AuthGuard('jwt'))
-  @Put(':id')
+  @Put()
   async update(
-    @Param('id') id: string,
+    @Request() req,
+    @Body('postId') postId: string,
     @Body('text') text: string,
     @Body('imageUrl') imageUrl: string,
-    @Request() req,
   ): Promise<PostEntity> {
     const userId = req.user.userId;
-    const post = await this.postsService.findOne(+id);
+    const post = await this.postsService.findOne(+postId);
     if (post.userId !== userId) {
       throw new UnauthorizedException('You can only update your own posts');
     }
-    return await this.postsService.updatePost(+id, text, imageUrl);
+    return await this.postsService.updatePost(+postId, text, imageUrl);
   }
 }

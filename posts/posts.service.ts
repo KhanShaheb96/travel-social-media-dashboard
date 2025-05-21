@@ -21,8 +21,12 @@ export class PostsService {
     return post;
   }
 
-  async findByUserId(userId: number): Promise<Post[]> {
-    return await this.postsRepository.find({ where: { userId } });
+  async findByUserId(userId: number): Promise<Post[] | { message: string }> {
+    const posts = await this.postsRepository.find({ where: { userId } });
+    if (posts.length === 0) {
+      return { message: "You haven't posted anything yet" }; 
+    }
+    return posts; 
   }
 
   async getAllPosts(): Promise<Post[]> {

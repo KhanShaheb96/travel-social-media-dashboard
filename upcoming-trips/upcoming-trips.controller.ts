@@ -1,9 +1,9 @@
-import { Controller, Get, Post, Body, Param } from '@nestjs/common';
+import { Controller, Get, Post, Body, UseGuards, Request } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
 import { UpcomingTripsService } from './upcoming-trips.service';
 
 class SaveTripDto {
-  destinationId: number;
-  userId: number;
+  destinationName: string; // destinationId থেকে destinationName-এ পরিবর্তন
 }
 
 @Controller('upcoming-trips')
@@ -15,14 +15,18 @@ export class UpcomingTripsController {
     return await this.upcomingTripsService.getUpcomingEvents();
   }
 
+  @UseGuards(AuthGuard('jwt'))
   @Post('save')
-  async saveTrip(@Body() saveTripDto: SaveTripDto) {
-    const { destinationId, userId } = saveTripDto; 
-    return await this.upcomingTripsService.saveTrip(destinationId, userId);
+  async saveTrip(@Body() saveTripDto: SaveTripDto, @Request() req) {
+    const userId = req.user.userId;
+    const { destinationName } = saveTripDto; // destinationId থেকে destinationName-এ পরিবর্তন
+    return await this.upcomingTripsService.saveTrip(destinationName, userId); // destinationId এর বদলে destinationName
   }
 
-  @Get('saved/:userId')
-  async getSavedTrips(@Param('userId') userId: string) {
-    return await this.upcomingTripsService.getSavedTrips(+userId);
+  @UseGuards(AuthGuard('jwt'))
+  @Get('saved')
+  async getSavedTrips(@Request() req) {
+    const userId = req.user.userId;
+    return await this.upcomingTripsService.getSavedTrips(userId);
   }
 }

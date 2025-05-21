@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Put, Param, Get, UseGuards, Request, UnauthorizedException } from '@nestjs/common';
+import { Controller, Post, Body, Put, Get, UseGuards, Request, UnauthorizedException } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { UsersService } from './users.service';
 import { AuthService } from '../auth/auth.service';
@@ -29,27 +29,22 @@ export class UsersController {
         return await this.authService.login(user);
     }
 
-    @Put(':id')
+    @UseGuards(AuthGuard('jwt'))
+    @Put()
     async update(
-        @Param('id') id: string,
+        @Request() req,
         @Body('name') name: string,
         @Body('email') email: string,
         @Body('password') password: string,
     ): Promise<User> {
-        return await this.usersService.updateUser(+id, name, email, password);
+        const userId = req.user.userId;
+        return await this.usersService.updateUser(userId, name, email, password);
     }
 
     @UseGuards(AuthGuard('jwt'))
-    @Get(':id')
-    async getUserProfile(@Param('id') id: string, @Request() req): Promise<User> {
-        const userIdFromToken = req.user.userId; 
-        const requestedId = +id;
-
-      
-        if (userIdFromToken !== requestedId) {
-            throw new UnauthorizedException('You can only access your own profile');
-        }
-
-        return await this.usersService.getUserProfile(requestedId);
+    @Get()
+    async getUserProfile(@Request() req): Promise<User> {
+        const userId = req.user.userId;
+        return await this.usersService.getUserProfile(userId);
     }
 }

@@ -11,26 +11,25 @@ export class SavedDestinationsService {
   ) {}
 
   private upcomingEvents = [
-    { name: 'Cox’s Bazaar', id: 1 },
-    { name: 'Bandarban', id: 2 },
-    { name: 'Srimangal', id: 3 },
+    { name: 'Cox’s Bazaar' }, 
+    { name: 'Bandarban' },
+    { name: 'Srimangal' },
   ];
 
-  async getUpcomingEvents() {
+  async getUpcomingEvents(): Promise<any[]> {
     return this.upcomingEvents;
   }
 
-  async saveDestination(destinationId: number, userId: number) {
-    const destination = this.upcomingEvents.find(event => event.id === destinationId);
-    if (!destination) throw new Error('Destination not found');
+  async saveDestination(destinationName: string, userId: number): Promise<SavedDestination> {
+
     const saved = this.savedDestinationsRepository.create({
-      destination: destination.name,
+      destination: destinationName, 
       userId,
     });
     return await this.savedDestinationsRepository.save(saved);
   }
 
-  async getSavedDestinations(userId: number) {
+  async getSavedDestinations(userId: number): Promise<SavedDestination[]> {
     return await this.savedDestinationsRepository.find({ where: { userId } });
   }
 }
